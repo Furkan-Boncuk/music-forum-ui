@@ -22,12 +22,11 @@ export const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 📌 Dinamik başlık belirleme
   const getPageTitle = () => {
     if (location.pathname.startsWith("/profile")) return "Profil";
     if (location.pathname.startsWith("/posts/")) return "Gönderi";
     if (location.pathname.startsWith("/settings")) return "Ayarlar";
-    return "Müzik Forum App"; // Varsayılan başlık
+    return "Müzik Forum App";
   };
 
   return (
@@ -78,7 +77,7 @@ export const Navbar = () => {
                   _hover={{ bg: "#333" }}
                   onClick={() => {
                     logout();
-                    window.location.href = "/auth"; // Oturum kapat ve giriş ekranına yönlendir
+                    window.location.href = "/authentication";
                   }}>
                   Çıkış Yap
                 </MenuItem>
@@ -86,8 +85,8 @@ export const Navbar = () => {
             </Menu>
           </Flex>
         ) : (
-          location.pathname !== "/auth" && (
-            <Link href="/auth">
+          location.pathname !== "/authentication" && (
+            <Link href="/authentication">
               <Button size="sm" colorScheme="gray">
                 Giriş Yap
               </Button>

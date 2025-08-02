@@ -22,7 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   // Kullanıcı giriş yapmamışsa login sayfasına yönlendir
   if (!isLoggedIn) {
-    return <Navigate to="/auth" state={{ from: location }} replace />;
+    return <Navigate to="/authentication" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;

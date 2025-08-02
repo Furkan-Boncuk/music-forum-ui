@@ -50,7 +50,7 @@ const App: React.FC = () => {
           }
         />
         <Route
-          path="/auth"
+          path="/authentication"
           element={
             !isLoggedIn ? (
               <Layout>

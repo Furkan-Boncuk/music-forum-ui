@@ -37,7 +37,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // Refresh Token da geçersizse, kullanıcıyı girişe yönlendir
         console.error("Session expired. Please log in again.", refreshError);
-        window.location.href = "/auth"; // Giriş sayfasına yönlendirme
+        window.location.href = "/authentication"; // Giriş sayfasına yönlendirme
       }
     }
 

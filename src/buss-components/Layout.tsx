@@ -9,7 +9,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const location = useLocation();
 
-  const hiddenFooterPaths = ["/auth"];
+  const hiddenFooterPaths = ["/authentication"];
 
   const showFooter = !hiddenFooterPaths.includes(location.pathname);
 
