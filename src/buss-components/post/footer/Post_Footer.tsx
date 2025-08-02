@@ -6,11 +6,8 @@ import { FiMessageCircle as IconCommentOutlined } from "react-icons/fi";
 import { TbMessageCircleFilled as IconComment } from "react-icons/tb";
 import { FaRegBookmark as IconBookmarkOutlined } from "react-icons/fa";
 import { FaBookmark as IconBookmark } from "react-icons/fa6";
-import { RiShareForwardLine as IconShareOutlined } from "react-icons/ri";
-import { RiShareForwardFill as IconShare } from "react-icons/ri";
 import { useAuthStore } from "../../../stores/authStore";
 import {
-  sharePost,
   toggleBookmarkPost,
   toggleLikePost,
 } from "../../../api/posts/posts";
@@ -41,7 +38,7 @@ const Post_Footer = ({
   const toast = useToast();
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
   const [bookmarkCount, setBookmarkCount] = useState(initialBookmarkCount);
-  const [shareCount, setShareCount] = useState(initialShareCount);
+  // const [shareCount, setShareCount] = useState(initialShareCount);
 
   const handleLike = async () => {
     if (!token) {
@@ -99,26 +96,27 @@ const Post_Footer = ({
     }
   };
 
-  const handleShare = async () => {
-    if (!token) {
-      toast({
-        title: "Hata",
-        description: "Paylaşmak için oturum açmalısınız",
-        status: "error",
-        duration: 1500,
-        isClosable: true,
-        position: "top-right",
-      });
-      return;
-    }
+  // const handleShare = async () => {
+  //   if (!token) {
+  //     toast({
+  //       title: "Hata",
+  //       description: "Paylaşmak için oturum açmalısınız",
+  //       status: "error",
+  //       duration: 1500,
+  //       isClosable: true,
+  //       position: "top-right",
+  //     });
+  //     return;
+  //   }
 
-    try {
-      const response = await sharePost({ postId, token });
-      setShareCount(response.shareCount);
-    } catch (error) {
-      console.error("Paylaşım başarısız:", error);
-    }
-  };
+  //   try {
+  //     const response = await sharePost({ postId, token });
+  //     console.log("shareCount", shareCount);
+  //     setShareCount(response.shareCount);
+  //   } catch (error) {
+  //     console.error("Paylaşım başarısız:", error);
+  //   }
+  // };
 
   return (
     <Flex direction={"column"}>

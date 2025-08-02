@@ -13,6 +13,14 @@ import { IoMdVolumeOff } from "react-icons/io";
 import axios from "axios";
 import { redirectToSpotifyLogin } from "../../api/spotifyAuth";
 
+declare global {
+  interface Window {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    Spotify: any;
+    onSpotifyWebPlaybackSDKReady: () => void;
+  }
+}
+
 const SpotifyMiniPlayer = ({
   trackUri,
   songTitle,
@@ -26,10 +34,10 @@ const SpotifyMiniPlayer = ({
 }) => {
   const accessToken = localStorage.getItem("spotifyAccessToken");
   const refreshToken = localStorage.getItem("spotifyRefreshToken");
-  const [player, setPlayer] = useState<any>(null);
+  // const [player, setPlayer] = useState<any>(null);
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
   const [isClicked, setIsClicked] = useState(false); // Kullanıcı tıklayana kadar şarkıyı oynatma
   const [currentToken, setCurrentToken] = useState(accessToken);
 
@@ -42,29 +50,27 @@ const SpotifyMiniPlayer = ({
     document.body.appendChild(script);
 
     script.onload = () => {
-      console.log("✅ Spotify Web Playback SDK Yüklendi!");
-
       window.onSpotifyWebPlaybackSDKReady = () => {
         const playerInstance = new window.Spotify.Player({
           name: "Custom Spotify Mini Player",
-          getOAuthToken: (cb) => cb(currentToken),
+          getOAuthToken: (cb: (token: string) => void) => cb(currentToken),
           volume: isMuted ? 0 : 0.5,
           enableP2P: false, // Güvenli olmayan bağlantıları engelle.
         });
 
-        playerInstance.addListener("ready", ({ device_id }) => {
+        playerInstance.addListener("ready", ({ device_id }: { device_id: string }) => {
           console.log("✅ Spotify Player Hazır! Device ID:", device_id);
           setDeviceId(device_id);
           localStorage.setItem("spotifyDeviceId", device_id);
         });
 
-        playerInstance.addListener("player_state_changed", (state) => {
-          if (!state) return;
-          setIsPlaying(!state.paused);
-        });
+        // playerInstance.addListener("player_state_changed", (state) => {
+        //   if (!state) return;
+        //   setIsPlaying(!state.paused);
+        // });
 
         playerInstance.connect();
-        setPlayer(playerInstance);
+        // setPlayer(playerInstance);
       };
     };
   }, [currentToken]);
@@ -157,7 +163,7 @@ const SpotifyMiniPlayer = ({
         opacity={accessToken ? 1 : 0.8}
         _hover={accessToken ? { bg: "#212121" } : {}}
         pointerEvents={accessToken ? "all" : "none"}
-        onClick={accessToken ? playSong : () => {}} // **Tıklandığında şarkıyı başlat**
+        onClick={accessToken ? playSong : () => {}}
         w="100%">
         <Image
           src={albumArt}
@@ -189,7 +195,7 @@ const SpotifyMiniPlayer = ({
             borderRadius="full"
             onClick={() => {
               if (!isClicked) {
-                playSong(); // İlk tıklamada şarkıyı başlat
+                playSong();
               }
               setIsMuted(!isMuted);
             }}

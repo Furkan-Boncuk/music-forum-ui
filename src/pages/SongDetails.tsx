@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-import { Box, Text, VStack, Flex, Spinner, Divider } from "@chakra-ui/react";
+import { Box, Text, Flex, Spinner } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { getSongById } from "../api/songs/songs";
 import SongLyrics from "../buss-components/feed/SongLyrics";
 import OnlineUsersOnTheSong from "../buss-components/songDetails/OnlineUsersOnTheSong";
 import SpotifyMiniPlayer from "../buss-components/songDetails/SpotifyPlayer";
+import { ISong } from "../types/ISong.interface";
 
 const SongDetailsPage = () => {
   const { songId } = useParams();
-  const [song, setSong] = useState<any>(null);
+  const [song, setSong] = useState<ISong | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

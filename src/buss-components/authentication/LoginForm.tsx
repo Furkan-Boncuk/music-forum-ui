@@ -59,7 +59,9 @@ export const LoginForm = ({
   const onSubmit = async (data: LoginFormInputs) => {
     await login(data.usernameOrEmail, data.password)
       .then((response) => {
-        const { accessToken, refreshToken } = response;
+        const { accessToken, 
+          // refreshToken 
+        } = response;
         const user = {
           id: response.user.id,
           username: response.user.username,

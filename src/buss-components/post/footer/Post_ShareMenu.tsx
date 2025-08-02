@@ -81,15 +81,14 @@ const Post_ShareMenu = ({
       </MenuButton>
 
       <MenuList bg="#171717" boxShadow={"lg"} border={"none"} color="white">
-        {navigator.share && (
-          <MenuItem
-            icon={<MdShare size={16} />}
-            onClick={handleNativeShare}
-            bg="transparent"
-            _hover={{ bg: "#212121" }}>
-            Cihazda Paylaş
-          </MenuItem>
-        )}
+        <MenuItem
+          icon={<MdShare size={16} />}
+          onClick={handleNativeShare}
+          bg="transparent"
+          _hover={{ bg: "#212121" }}
+        >
+          Cihazda Paylaş
+        </MenuItem>
         <MenuItem
           icon={<MdContentCopy size={16} />}
           onClick={() => {

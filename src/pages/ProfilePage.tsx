@@ -24,14 +24,16 @@ import {
 import { useAuthStore } from "../stores/authStore";
 import Post from "../buss-components/profile/Post";
 import IPost from "../types/IPost.interface";
+import { ISong } from "../types/ISong.interface";
+import { IUser } from "../types/IUser";
 
 const ProfilePage = () => {
   const { userId } = useParams();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState<IPost[]>([]);
   const [likedPosts, setLikedPosts] = useState([]);
-  const [recentSongs, setRecentSongs] = useState([]);
+  const [recentSongs, setRecentSongs] = useState<ISong[] | null>(null);
   const { token, user: _user } = useAuthStore();
   const [isFollowing, setIsFollowing] = useState(false);
 
@@ -69,7 +71,7 @@ const ProfilePage = () => {
   return (
     <Box maxW={"600px"} mx={"auto"}>
       <Image
-        src={user.banner || "/assets/default_banner.png"}
+        src={user?.banner || "/assets/default_banner.png"}
         border={"1px solid #444"}
         borderRadius={"5px"}
         w="100%"
@@ -77,13 +79,13 @@ const ProfilePage = () => {
         objectFit="cover"
       />
       <Flex align="center" mt={-8} ml={4}>
-        <Avatar src={user.avatar} size="lg" />
+        <Avatar src={user?.avatar} size="lg" />
         <Box ml={4}>
           <Text fontSize="xl" fontWeight="bold">
-            {user.username}
+            {user?.username}
           </Text>
           <Text fontSize="sm" color="gray.400">
-            @{user.userTag}
+            @{user?.userTag}
           </Text>
         </Box>
       </Flex>
@@ -97,13 +99,13 @@ const ProfilePage = () => {
           </Button>
         )}
         <Text fontSize={"14px"}>
-          <strong>{user.posts.length}</strong> Gönderi
+          <strong>{user?.posts.length}</strong> Gönderi
         </Text>
         <Text fontSize={"14px"}>
-          <strong>{user.followers.length}</strong> Takipçi
+          <strong>{user?.followers.length}</strong> Takipçi
         </Text>
         <Text fontSize={"14px"}>
-          <strong>{user.followings.length}</strong> Takip Edilen
+          <strong>{user?.followings.length}</strong> Takip Edilen
         </Text>
       </Flex>
 
@@ -150,8 +152,8 @@ const ProfilePage = () => {
             {/* )} */}
           </TabPanel>
           <TabPanel>
-            {recentSongs.length > 0 ? (
-              recentSongs.map((song) => (
+            {(recentSongs?.length || 0) > 0 ? (
+              recentSongs?.map((song) => (
                 <Box key={song._id} p={4} borderBottom="1px solid gray">
                   <Text>
                     {song.title} - {song.artist}

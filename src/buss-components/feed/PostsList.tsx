@@ -1,13 +1,12 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Text, Image, Spinner, Flex, Avatar } from "@chakra-ui/react";
+import { Box, Text, Image, Spinner, Flex } from "@chakra-ui/react";
 import { getPosts } from "../../api/posts/posts";
-import { formatDistanceToNowStrict } from "date-fns";
-import { tr } from "date-fns/locale";
 import Post_User from "../post/Post_User";
+import IPost from "../../types/IPost.interface";
 
 const PostsList = () => {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);

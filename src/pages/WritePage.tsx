@@ -17,11 +17,12 @@ import { searchSongs } from "../api/songs/songs";
 import SpotifyMiniPlayer from "../buss-components/songDetails/SpotifyPlayer";
 import TiptapEditor from "../buss-components/write/TiptapEditor";
 import { useAuthStore } from "../stores/authStore";
+import { ISong } from "../types/ISong.interface";
 
 const WritePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [songs, setSongs] = useState([]);
-  const [selectedSong, setSelectedSong] = useState(null);
+  const [songs, setSongs] = useState<ISong[]>([]);
+  const [selectedSong, setSelectedSong] = useState<ISong | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const toast = useToast();
@@ -44,10 +45,12 @@ const WritePage = () => {
         duration: 3000,
         isClosable: true,
       });
+      console.log("Şarkılar bulunamadı: ", error);
+      
     }
   };
 
-  const handleSelectSong = (song) => {
+  const handleSelectSong = (song: ISong) => {
     setSelectedSong(song);
     setSearchQuery(song.title);
     setSongs([]);
@@ -103,6 +106,8 @@ const WritePage = () => {
         duration: 3000,
         isClosable: true,
       });
+      console.log("Yazı eklenirken hata oluştu: ", error);
+      
     }
   };
 

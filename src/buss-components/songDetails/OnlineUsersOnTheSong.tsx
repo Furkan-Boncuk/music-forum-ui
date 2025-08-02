@@ -10,7 +10,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  IconButton,
 } from "@chakra-ui/react";
 import { io } from "socket.io-client";
 import { findUserById } from "../../api/users/users";
@@ -27,7 +26,7 @@ interface User {
 const OnlineUsersOnTheSong = ({ songId }: { songId: string }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { onOpen } = useDisclosure();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   useEffect(() => {

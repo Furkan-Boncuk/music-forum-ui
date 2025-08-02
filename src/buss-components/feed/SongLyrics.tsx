@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Text, Spinner, Button, Flex } from "@chakra-ui/react";
+import { Box, Text, Spinner, Flex } from "@chakra-ui/react";
 import { getLyrics } from "../../api/lyrics/lyrics";
 
 const SongLyrics = ({

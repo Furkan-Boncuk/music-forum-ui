@@ -8,12 +8,12 @@ export default defineConfig({
     "process.env": process.env,
   },
   server: {
-    host: "0.0.0.0", // Tüm IP'lerden erişime izin ver
-    port: 5173, // (Değiştirebilirsin)
-    strictPort: true, // Belirtilen portu kesin kullan
+    host: "0.0.0.0",
+    port: 5173,
+    strictPort: true,
     hmr: {
-      clientPort: 5173, // HMR'nin doğru çalışması için
+      clientPort: 5173,
     },
-    allowedHosts: [".ngrok-free.app", "192.168.0.110", "localhost"], // Buraya kendi IP veya ngrok domainini ekle
+    allowedHosts: [".ngrok-free.app", "192.168.0.110", "localhost"],
   },
 });

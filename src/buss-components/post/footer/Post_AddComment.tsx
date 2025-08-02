@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Input, Button, useToast, Flex } from "@chakra-ui/react";
+import { Input, useToast, Flex } from "@chakra-ui/react";
 import { useAuthStore } from "../../../stores/authStore";
 import { addComment } from "../../../api/comments/comments";
 
@@ -45,6 +45,7 @@ const Post_AddComment = ({
         colorScheme: "red",
         position: "top-right",
       });
+      console.error("Yorum eklenemedi: ",error);
     } finally {
       setIsSubmitting(false);
     }
