@@ -58,11 +58,25 @@ const SpotifyMiniPlayer = ({
           enableP2P: false, // Güvenli olmayan bağlantıları engelle.
         });
 
-        playerInstance.addListener("ready", ({ device_id }: { device_id: string }) => {
+        playerInstance.addListener("ready", async ({ device_id }: { device_id: string }) => {
           console.log("✅ Spotify Player Hazır! Device ID:", device_id);
           setDeviceId(device_id);
           localStorage.setItem("spotifyDeviceId", device_id);
+          await playerInstance.activateElement();
         });
+
+        playerInstance.addListener("initialization_error", ({ message }: { message: string }) =>
+          console.error("init error", message)
+        );
+        playerInstance.addListener("authentication_error", ({ message }: { message: string }) =>
+          console.error("auth error", message)
+        );
+        playerInstance.addListener("account_error", ({ message }: { message: string }) =>
+          console.error("account error", message)
+        );
+        playerInstance.addListener("playback_error", ({ message }: { message: string }) =>
+          console.error("playback error", message)
+        );        
 
         // playerInstance.addListener("player_state_changed", (state) => {
         //   if (!state) return;
