@@ -40,6 +40,7 @@ const SpotifyMiniPlayer = ({
   // const [isPlaying, setIsPlaying] = useState(false);
   const [isClicked, setIsClicked] = useState(false); // Kullanıcı tıklayana kadar şarkıyı oynatma
   const [currentToken, setCurrentToken] = useState(accessToken);
+  const [hasRetried, setHasRetried] = useState(false);
 
   useEffect(() => {
     if (!currentToken) return;
@@ -49,45 +50,40 @@ const SpotifyMiniPlayer = ({
     script.async = true;
     document.body.appendChild(script);
 
-    script.onload = () => {
-      window.onSpotifyWebPlaybackSDKReady = () => {
-        const playerInstance = new window.Spotify.Player({
-          name: "Custom Spotify Mini Player",
-          getOAuthToken: (cb: (token: string) => void) => cb(currentToken),
-          volume: isMuted ? 0 : 0.5,
-          enableP2P: false, // Güvenli olmayan bağlantıları engelle.
-        });
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      const playerInstance = new window.Spotify.Player({
+        name: "Custom Spotify Mini Player",
+        getOAuthToken: (cb: (token: string) => void) => cb(currentToken),
+        volume: isMuted ? 0 : 0.5,
+      });
 
-        playerInstance.addListener("ready", async ({ device_id }: { device_id: string }) => {
-          console.log("✅ Spotify Player Hazır! Device ID:", device_id);
-          setDeviceId(device_id);
-          localStorage.setItem("spotifyDeviceId", device_id);
+      playerInstance.addListener("ready", async ({ device_id }: { device_id: string }) => {
+        console.log("✅ Spotify Player Hazır! Device ID:", device_id);
+        setDeviceId(device_id);
+        localStorage.setItem("spotifyDeviceId", device_id);
+        try {
           await playerInstance.activateElement();
-        });
+        } catch (e) {
+          console.warn("🔒 activateElement() çağrısı başarısız oldu:", e);
+        }
+      });
 
-        playerInstance.addListener("initialization_error", ({ message }: { message: string }) =>
-          console.error("init error", message)
-        );
-        playerInstance.addListener("authentication_error", ({ message }: { message: string }) =>
-          console.error("auth error", message)
-        );
-        playerInstance.addListener("account_error", ({ message }: { message: string }) =>
-          console.error("account error", message)
-        );
-        playerInstance.addListener("playback_error", ({ message }: { message: string }) =>
-          console.error("playback error", message)
-        );        
+      playerInstance.addListener("initialization_error", ({ message }: { message: string }) =>
+        console.error("init error", message)
+      );
+      playerInstance.addListener("authentication_error", ({ message }: { message: string }) =>
+        console.error("auth error", message)
+      );
+      playerInstance.addListener("account_error", ({ message }: { message: string }) =>
+        console.error("account error", message)
+      );
+      playerInstance.addListener("playback_error", ({ message }: { message: string }) =>
+        console.error("playback error", message)
+      );
 
-        // playerInstance.addListener("player_state_changed", (state) => {
-        //   if (!state) return;
-        //   setIsPlaying(!state.paused);
-        // });
-
-        playerInstance.connect();
-        // setPlayer(playerInstance);
-      };
+      playerInstance.connect();
     };
-  }, [currentToken]);
+  }, [currentToken, isMuted]);
 
   useEffect(() => {
     const savedDeviceId = localStorage.getItem("spotifyDeviceId");
@@ -97,6 +93,39 @@ const SpotifyMiniPlayer = ({
     }
   }, []);
 
+  const refreshSpotifyAccessToken = async (onSuccess?: () => void) => {
+    if (!refreshToken) {
+      console.warn("❌ Refresh token bulunamadı! Kullanıcı yeniden giriş yapmalı.");
+      redirectToSpotifyLogin();
+      return null;
+    }
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/auth/spotify/refresh`,
+        { refreshToken }
+      );
+
+      const { accessToken: newAccessToken, expiresIn } = response.data;
+
+      localStorage.setItem("spotifyAccessToken", newAccessToken);
+      localStorage.setItem(
+        "spotifyTokenExpiration",
+        (Date.now() + expiresIn * 1000).toString()
+      );
+
+      console.log("✅ Yeni Access Token alındı:", newAccessToken);
+      setCurrentToken(newAccessToken);
+
+      if (onSuccess) onSuccess();
+
+      return newAccessToken;
+    } catch (error) {
+      console.error("Spotify token yenileme hatası:", error);
+      return null;
+    }
+  };
+
   const playSong = async () => {
     if (!deviceId || !trackUri || !currentToken) {
       console.warn("❌ `deviceId` veya `accessToken` eksik!");
@@ -104,7 +133,7 @@ const SpotifyMiniPlayer = ({
     }
 
     console.log("🎵 `playSong()` başladı. `deviceId`:", deviceId);
-    setIsClicked(true); // Kullanıcının tıkladığını kaydet
+    setIsClicked(true);
 
     try {
       const res = await fetch(
@@ -119,47 +148,13 @@ const SpotifyMiniPlayer = ({
         }
       );
 
-      if (res.status === 401) {
+      if (res.status === 401 && !hasRetried) {
         console.log("⚠️ Access token süresi doldu, yenileniyor...");
-        const newToken = await refreshSpotifyAccessToken();
-        if (newToken) {
-          setCurrentToken(newToken);
-          playSong();
-        }
+        setHasRetried(true); // sonsuz döngüye girmesin
+        await refreshSpotifyAccessToken(() => playSong());
       }
     } catch (error) {
       console.error("Şarkı oynatılırken hata:", error);
-    }
-  };
-
-  // **Token Refresh Mantığını Güncelle**
-  const refreshSpotifyAccessToken = async () => {
-    if (!refreshToken) {
-      console.warn("❌ Refresh token bulunamadı! Kullanıcı yeniden giriş yapmalı.");
-      return null;
-    }
-
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/auth/spotify/refresh`,
-        { refreshToken }
-      );
-
-      const { accessToken, expiresIn } = response.data;
-
-      localStorage.setItem("spotifyAccessToken", accessToken);
-      localStorage.setItem(
-        "spotifyTokenExpiration",
-        (Date.now() + expiresIn * 1000).toString()
-      );
-
-      console.log("✅ Yeni Access Token alındı:", accessToken);
-      setCurrentToken(accessToken);
-
-      return accessToken;
-    } catch (error) {
-      console.error("Spotify token yenileme hatası:", error);
-      return null;
     }
   };
 
@@ -193,7 +188,7 @@ const SpotifyMiniPlayer = ({
             {artistName}
           </Text>
         </Box>
-        <Badge colorScheme={"gray"} p={0} borderRadius="full">
+        <Badge colorScheme="gray" p={0} borderRadius="full">
           <IconButton
             aria-label="Ses Aç/Kapat"
             icon={
@@ -208,9 +203,7 @@ const SpotifyMiniPlayer = ({
             color="white"
             borderRadius="full"
             onClick={() => {
-              if (!isClicked) {
-                playSong();
-              }
+              if (!isClicked) playSong();
               setIsMuted(!isMuted);
             }}
           />
