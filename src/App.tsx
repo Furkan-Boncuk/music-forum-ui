@@ -14,12 +14,13 @@ import NotFoundPage from "./pages/NotFoundPage";
 import { useAuthStore } from "./stores/authStore";
 import { Center, Spinner } from "@chakra-ui/react";
 import SearchPage from "./pages/SearchPage";
-import SongDetailsPage from "./pages/SongDetails";
+// import SongDetailsPage from "./pages/SongDetails";
 import SpotifyCallback from "./buss-components/songDetails/callback";
 import WritePage from "./pages/WritePage";
 import PostPage from "./pages/PostPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
+import SongMapPage from "./pages/SongMapPage";
 
 const App: React.FC = () => {
   const { isLoggedIn, checkToken } = useAuthStore();
@@ -73,7 +74,8 @@ const App: React.FC = () => {
           path="/songs/:songId"
           element={
             <Layout>
-              <SongDetailsPage />
+              {/* <SongDetailsPage /> */}
+              <SongMapPage />
             </Layout>
           }
         />

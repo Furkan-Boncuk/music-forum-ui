@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI; // 🔥 Çevresel değişkenleri düzgün kullandığınızdan emin olun.
+const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
 
 const SCOPES = [
   "streaming",
@@ -22,7 +22,7 @@ export const redirectToSpotifyLogin = () => {
   console.log("Yetkilendirme URL'si:", AUTH_URL);
 
   localStorage.setItem("lastVisitedPage", window.location.pathname);
-  window.location.href = AUTH_URL; // ✅ Kullanıcıyı yönlendir
+  window.location.href = AUTH_URL;
 };
 
 
@@ -33,7 +33,7 @@ export const getSpotifyAccessToken = () => {
 };
 
 export const refreshSpotifyAccessToken = async () => {
-  const refreshToken = localStorage.getItem("spotifyRefreshToken"); // 🔥 Refresh token'ı localStorage'dan al
+  const refreshToken = localStorage.getItem("spotifyRefreshToken");
 
   if (!refreshToken) {
     console.log("❌ Refresh token bulunamadı.");
@@ -59,37 +59,6 @@ export const refreshSpotifyAccessToken = async () => {
     return null;
   }
 };
-
-
-// import axios from "axios";
-
-// // VITE_SPOTIFY_CLIENT_ID=aa6fbb4083364c1fb417ca51d2a7be3b
-// // VITE_SPOTIFY_REDIRECT_URI=http://localhost:5173/callback
-
-// const CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-// const REDIRECT_URI = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
-
-// const SCOPES = [
-//   "streaming",
-//   "user-read-email",
-//   "user-read-private",
-//   "user-modify-playback-state",
-//   "user-read-playback-state",
-//   "user-library-read",
-//   "user-library-modify",
-// ].join(" ");
-
-// const AUTH_URL = `https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(
-//   REDIRECT_URI
-// )}&scope=${encodeURIComponent(SCOPES)}`;
-
-// export const redirectToSpotifyLogin = () => {
-//   console.log("🔄 Spotify yetkilendirme sayfasına yönlendiriliyor...");
-//   console.log("Yetkilendirme URL'si:", AUTH_URL);
-  
-//   localStorage.setItem("lastVisitedPage", window.location.pathname);
-//   window.location.href = AUTH_URL; // ✅ Kullanıcıyı yönlendir
-// };
 
 export const handleSpotifyCallback = async () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -130,33 +99,3 @@ export const handleSpotifyCallback = async () => {
     console.error("❌ Spotify yetkilendirme işlemi başarısız oldu:", error);
   }
 };
-
-// export const getSpotifyAccessToken = () => {
-//   const hash = window.location.hash.substring(1);
-//   const params = new URLSearchParams(hash);
-//   const accessToken = params.get("access_token");
-
-//   if (accessToken) {
-//     localStorage.setItem("spotifyAccessToken", accessToken); // ✅ Token'ı sakla
-//   }
-
-//   return accessToken;
-// };
-
-// export const refreshSpotifyAccessToken = async () => {
-//   const refreshToken = localStorage.getItem("spotifyRefreshToken");
-
-//   if (!refreshToken) return null;
-
-//   try {
-//     const response = await axios.post("/api/auth/spotify/refresh", {
-//       refreshToken,
-//     });
-//     const { accessToken } = response.data;
-//     localStorage.setItem("spotifyAccessToken", accessToken);
-//     return accessToken;
-//   } catch (error) {
-//     console.error("Spotify token yenileme hatası:", error);
-//     return null;
-//   }
-// };

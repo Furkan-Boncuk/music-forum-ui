@@ -15,8 +15,6 @@ import { redirectToSpotifyLogin } from "../../api/spotifyAuth";
 
 declare global {
   interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Spotify: any;
     onSpotifyWebPlaybackSDKReady: () => void;
   }
 }

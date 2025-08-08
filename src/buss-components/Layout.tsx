@@ -9,17 +9,24 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const location = useLocation();
 
-  const hiddenFooterPaths = ["/authentication"];
+  const hiddenFooterPaths = ["/authentication", "/songs"];
+  const hiddenNavbarPaths = ["/songs"];
 
-  const showFooter = !hiddenFooterPaths.includes(location.pathname);
+  const showFooter = !hiddenFooterPaths.some((path) =>
+    location.pathname.startsWith(path)
+  );
 
+  const showNavbar = !hiddenNavbarPaths.some((path) =>
+    location.pathname.startsWith(path)
+  );
+  
   return (
     <Box minH="100vh" display="flex" flexDirection="column">
-      <Navbar />
-      <Box flex="1" p={4}>
+      {showNavbar ? <Navbar /> : <></>}
+      <Box flex="1" p={showNavbar ? 4 : 0}>
         {children}
       </Box>
-      {showFooter && <Footer />}
+      {showFooter ? <Footer /> : <></>}
     </Box>
   );
 };
